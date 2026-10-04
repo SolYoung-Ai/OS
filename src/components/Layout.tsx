@@ -24,10 +24,9 @@ export const Layout = () => {
     <div className="px-3 pt-5 pb-4">
       <button
         onClick={() => navigate('/')}
-        className="flex items-center gap-2 text-[17px] font-semibold tracking-tight text-foreground"
+        className="flex items-baseline text-[17px] font-semibold tracking-tight text-foreground"
         aria-label="回到首页"
       >
-        <img src="logo.png" alt="MyOS" className="h-6 w-6" />
         My<span className="text-[#E8632B]">.</span>OS
       </button>
       <p className="mt-1.5 pl-0.5 text-[11px] leading-snug text-muted-foreground">
@@ -77,7 +76,6 @@ export const Layout = () => {
       {/* ── 顶栏（桌面：搜索+主题；移动端：品牌） ───── */}
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur md:left-[220px] md:px-8">
         <div className="flex items-center gap-2 md:hidden">
-          <img src="logo.png" alt="MyOS" className="h-5 w-5" />
           <span className="text-[15px] font-semibold tracking-tight text-foreground">
             My<span className="text-[#E8632B]">.</span>OS
           </span>

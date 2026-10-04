@@ -27,7 +27,7 @@ export const Layout = () => {
         className="flex items-baseline text-[17px] font-semibold tracking-tight text-foreground"
         aria-label="回到首页"
       >
-        My<span className="text-[#E8632B]">.</span>OS
+        My<span className="text-[#E8632B]"> </span>OS
       </button>
       <p className="mt-1.5 pl-0.5 text-[11px] leading-snug text-muted-foreground">
         记录、思考、创作，然后继续前进。
@@ -69,7 +69,7 @@ export const Layout = () => {
         {renderBrand()}
         {renderDesktopNav()}
         <div className="border-t border-border p-2 text-[11px] text-muted-foreground">
-          <p className="px-3 py-1">Personal OS · v0.1</p>
+          <p className="px-3 py-1">My OS · v0.1</p>
         </div>
       </aside>
 
@@ -77,7 +77,7 @@ export const Layout = () => {
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur md:left-[220px] md:px-8">
         <div className="flex items-center gap-2 md:hidden">
           <span className="text-[15px] font-semibold tracking-tight text-foreground">
-            My<span className="text-[#E8632B]">.</span>OS
+            My<span className="text-[#E8632B]"> </span>OS
           </span>
         </div>
 

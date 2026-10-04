@@ -140,7 +140,7 @@ export default function SettingsPage() {
       <div className="rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 text-[15px] font-medium text-foreground">关于</h2>
         <p className="mb-4 text-[13px] text-muted-foreground">
-          Personal OS · 记录、思考、创作，然后继续前进。
+          My OS · 记录、思考、创作，然后继续前进。
         </p>
         <a
           href="https://solyoung.com"

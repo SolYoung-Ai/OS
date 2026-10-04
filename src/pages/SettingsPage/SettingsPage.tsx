@@ -1,16 +1,20 @@
 // EXPORTS: SettingsPage
-// 设置：个人信息 / 外观 / 数据管理 / 关于
+// 设置：个人信息 / 外观 / 数据管理 / 下载安装 / 使用教学 / 关于
 
 import { useState, useRef } from 'react';
 import { useDB } from '@/data/db-context';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { toast } from 'sonner';
-import { Sun, Moon, Download, Upload, Trash2, User, ExternalLink } from 'lucide-react';
+import {
+  Sun, Moon, Download, Upload, Trash2, User, ExternalLink,
+  Monitor, HelpCircle, ChevronDown,
+} from 'lucide-react';
 
 export default function SettingsPage() {
   const { db, setDb, resetAll } = useDB();
   const { theme, setTheme } = useThemeMode();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const setName = (name: string) => {
     setDb((prev) => ({
@@ -31,7 +35,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `personal-os-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `my-os-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success('已导出备份文件');
@@ -58,6 +62,33 @@ export default function SettingsPage() {
     e.target.value = '';
   };
 
+  const faqs = [
+    {
+      q: '怎么改我的名字？',
+      a: '在上方「个人信息」输入框填你的名字，首页问候语会自动变成"下午好，XXX"。不填则只显示"下午好"。',
+    },
+    {
+      q: '怎么下载到自己电脑上用？',
+      a: '两种方式：\n\n1. 【推荐】用 Chrome / Edge 打开本站，地址栏右侧会出现「安装」图标，点击即可安装为桌面应用，离线也能用。\n\n2. 手动方式：把整个网站的静态文件下载下来，双击 index.html 即可在浏览器打开，数据存在你自己的浏览器里。',
+    },
+    {
+      q: '我的数据存在哪里？会丢吗？',
+      a: '所有数据都存在你当前浏览器的 localStorage 里，不会上传到任何服务器。换浏览器、清理浏览器缓存、或者卸载重装浏览器都会丢失数据。\n\n所以建议：定期点「导出备份」下载一个 JSON 文件，换设备时点「导入备份」恢复。',
+    },
+    {
+      q: '每个页面是干什么的？',
+      a: '· 首页：快速记录灵感，看最近在做什么\n· 记录：Capture，随手记想法\n· 灵感：所有捕获的想法列表\n· 创作：把想法变成内容（脚本/文案/文章）\n· 项目：管理正在进行的事\n· 此刻：简短记录正在做什么\n· 档案：所有内容的时间线归档',
+    },
+    {
+      q: '快捷键有哪些？',
+      a: '· ⌘K（Ctrl+K）：全局搜索\n· N：新建灵感\n· C：新建内容\n· P：新建项目\n· Shift+N：新此刻\n· Esc：关闭弹窗\n\n在输入框里打字时快捷键不会触发。',
+    },
+    {
+      q: '怎么备份和迁移数据？',
+      a: '点「导出备份」会下载一个 JSON 文件。换电脑或换浏览器后，打开本站，点「导入备份」选择这个 JSON 文件，所有数据就恢复了。',
+    },
+  ];
+
   return (
     <div className="mx-auto w-full max-w-[700px]">
       <div className="pb-6 pt-2">
@@ -68,7 +99,7 @@ export default function SettingsPage() {
       </div>
 
       {/* 个人信息 */}
-      <div className="mb-8 rounded-xl border border-border bg-card p-6">
+      <div className="mb-6 rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 flex items-center gap-2 text-[15px] font-medium text-foreground">
           <User className="h-4 w-4" /> 个人信息
         </h2>
@@ -85,7 +116,7 @@ export default function SettingsPage() {
       </div>
 
       {/* 外观 */}
-      <div className="mb-8 rounded-xl border border-border bg-card p-6">
+      <div className="mb-6 rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 text-[15px] font-medium text-foreground">外观</h2>
         <div className="flex items-center gap-2">
           {[
@@ -107,8 +138,31 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* 下载安装 */}
+      <div className="mb-6 rounded-xl border border-border bg-card p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-[15px] font-medium text-foreground">
+          <Monitor className="h-4 w-4" /> 下载到自己电脑
+        </h2>
+        <div className="space-y-3 text-[13px] leading-relaxed text-muted-foreground">
+          <div className="rounded-lg border border-border bg-background p-4">
+            <p className="mb-2 font-medium text-foreground">方式一：安装为桌面应用（推荐）</p>
+            <p className="text-[12px] leading-relaxed">
+              用 Chrome 或 Edge 浏览器打开本站，地址栏右侧会出现「安装 / Install」图标。
+              点击后会安装成一个独立应用，离线也能打开，像桌面软件一样使用。
+            </p>
+          </div>
+          <div className="rounded-lg border border-border bg-background p-4">
+            <p className="mb-2 font-medium text-foreground">方式二：下载静态文件</p>
+            <p className="text-[12px] leading-relaxed">
+              把网站的静态文件下载到本地，双击 index.html 即可在浏览器打开。
+              所有数据存在你自己的浏览器里，不依赖网络。
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* 数据管理 */}
-      <div className="mb-8 rounded-xl border border-border bg-card p-6">
+      <div className="mb-6 rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 text-[15px] font-medium text-foreground">数据管理</h2>
         <p className="mb-4 text-[12px] text-muted-foreground">
           数据保存在当前浏览器本地。建议定期导出备份，换设备或清理浏览器时可以导入恢复。
@@ -133,6 +187,35 @@ export default function SettingsPage() {
           >
             <Trash2 className="h-4 w-4" /> 清空并恢复示例
           </button>
+        </div>
+      </div>
+
+      {/* 使用教学 */}
+      <div className="mb-6 rounded-xl border border-border bg-card p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-[15px] font-medium text-foreground">
+          <HelpCircle className="h-4 w-4" /> 使用教学
+        </h2>
+        <div className="space-y-2">
+          {faqs.map((faq, i) => (
+            <div key={i} className="rounded-lg border border-border overflow-hidden">
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left text-[13px] font-medium text-foreground hover:bg-accent/50"
+              >
+                {faq.q}
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                    openFaq === i ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+              {openFaq === i && (
+                <div className="border-t border-border px-4 py-3 text-[12px] leading-relaxed whitespace-pre-line text-muted-foreground">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 

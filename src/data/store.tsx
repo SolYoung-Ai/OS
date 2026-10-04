@@ -274,6 +274,12 @@ export function DBProvider({ children }: { children: ReactNode }) {
       nowEntries: prev.nowEntries.filter((n) => n.id !== id),
     }));
 
+  const deleteArchiveEntry = (id: string) =>
+    setDbState((prev) => ({
+      ...prev,
+      archiveEntries: prev.archiveEntries.filter((a) => a.id !== id),
+    }));
+
   return (
     <DBContext.Provider
       value={{
@@ -292,6 +298,7 @@ export function DBProvider({ children }: { children: ReactNode }) {
         addTask,
         addNow,
         deleteNow,
+        deleteArchiveEntry,
         resetAll,
       }}
     >

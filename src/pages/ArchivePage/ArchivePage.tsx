@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDB } from '@/data/db-context';
 import type { ArchiveKind, IArchiveEntry } from '@/data/types';
 import { EmptyState } from '@/components/blocks';
+import { Trash2 } from 'lucide-react';
 
 const KINDS: { id: ArchiveKind | 'all'; label: string }[] = [
   { id: 'all', label: '全部' },
@@ -22,14 +23,13 @@ interface MonthGroup {
 }
 
 export default function ArchivePage() {
-  const { db } = useDB();
+  const { db, deleteArchiveEntry } = useDB();
   const [kind, setKind] = useState<ArchiveKind | 'all'>('all');
 
   const dbEntries = db.archiveEntries
     .filter((a) => (kind === 'all' ? true : a.kind === kind))
     .sort((a, b) => b.occurredOn.localeCompare(a.occurredOn));
 
-  // 按 年月 分组
   const groups: MonthGroup[] = [];
   for (const e of dbEntries) {
     const month = Number(e.occurredOn.slice(5, 7));
@@ -43,6 +43,12 @@ export default function ArchivePage() {
     }
     g.entries.push(e);
   }
+
+  const onDelete = (id: string) => {
+    if (confirm('确定删除这条档案记录？')) {
+      deleteArchiveEntry(id);
+    }
+  };
 
   return (
     <div className="mx-auto w-full max-w-[900px]">
@@ -82,15 +88,26 @@ export default function ArchivePage() {
                 {g.entries.map((e) => (
                   <div key={e.id} className="relative mb-4 pl-2">
                     <span className="absolute -left-[25px] top-1 h-2 w-2 rounded-full bg-muted-foreground/30" />
-                    <p className="text-[14px] text-foreground">
-                      <span className="mr-2 tabular-nums text-[12px] text-muted-foreground">
-                        {Number(e.occurredOn.slice(8, 10))}
-                      </span>
-                      {e.title}
-                    </p>
-                    {e.subtitle && (
-                      <p className="ml-6 mt-0.5 text-[13px] text-muted-foreground">{e.subtitle}</p>
-                    )}
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[14px] text-foreground">
+                          <span className="mr-2 tabular-nums text-[12px] text-muted-foreground">
+                            {Number(e.occurredOn.slice(8, 10))}
+                          </span>
+                          {e.title}
+                        </p>
+                        {e.subtitle && (
+                          <p className="ml-6 mt-0.5 text-[13px] text-muted-foreground">{e.subtitle}</p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => onDelete(e.id)}
+                        className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-destructive"
+                        aria-label="删除"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

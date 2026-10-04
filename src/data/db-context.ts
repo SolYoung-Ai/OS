@@ -20,6 +20,7 @@ export type DBContextValue = {
   addTask: (projectId: string, title: string) => void;
   addNow: (text: string) => void;
   deleteNow: (id: string) => void;
+  deleteArchiveEntry: (id: string) => void;
   resetAll: () => void;
 };
 

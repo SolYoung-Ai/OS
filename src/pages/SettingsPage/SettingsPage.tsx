@@ -143,7 +143,7 @@ export default function SettingsPage() {
           My OS · 记录、思考、创作，然后继续前进。
         </p>
         <a
-          href="https://solyoung.com"
+          href="https://solyoung.top"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 text-[13px] text-foreground underline-offset-4 hover:underline"

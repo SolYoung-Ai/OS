@@ -10,7 +10,7 @@ import { NavIcon } from '@/components/NavIcon';
 import CommandPalette from '@/components/CommandPalette';
 import { useShortcuts } from '@/hooks/use-shortcuts';
 import { useThemeMode } from '@/hooks/use-theme-mode';
-import { Search, Moon, Sun, Plus } from 'lucide-react';
+import { Search, Moon, Sun, Plus, Settings } from 'lucide-react';
 
 export const Layout = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -86,6 +86,13 @@ export const Layout = () => {
         <div className="hidden md:flex md:flex-1" />
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate('/settings')}
+            className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:hidden"
+            aria-label="设置"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
           <button
             onClick={() => setPaletteOpen(true)}
             className="hidden items-center gap-2 rounded-md border border-border px-3 py-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground md:flex"

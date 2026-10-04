@@ -69,7 +69,7 @@ export const Layout = () => {
         {renderBrand()}
         {renderDesktopNav()}
         <div className="border-t border-border p-2 text-[11px] text-muted-foreground">
-          <p className="px-3 py-1">My OS · v0.1</p>
+          <p className="px-3 py-1">© 2026 SolYoung</p>
         </div>
       </aside>
 

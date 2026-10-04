@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight, Pencil, Trash2 } from 'lucide-react';
 
 export default function IdeaDetailPage() {
   const { id } = useParams();
-  const { db, updateIdea, archiveIdea, addContent } = useDB();
+  const { db, updateIdea, deleteIdea, addContent } = useDB();
   const navigate = useNavigate();
 
   const idea = db.ideas.find((i) => i.id === id);
@@ -34,7 +34,7 @@ export default function IdeaDetailPage() {
 
   const onDelete = () => {
     if (confirm('确定删除这条灵感？')) {
-      archiveIdea(idea.id);
+      deleteIdea(idea.id);
       navigate('/ideas');
     }
   };

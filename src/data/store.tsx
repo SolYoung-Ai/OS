@@ -249,6 +249,31 @@ export function DBProvider({ children }: { children: ReactNode }) {
 
   const resetAll = () => setDbState(MOCK_DB);
 
+  const deleteIdea = (id: string) =>
+    setDbState((prev) => ({
+      ...prev,
+      ideas: prev.ideas.filter((i) => i.id !== id),
+    }));
+
+  const deleteContent = (id: string) =>
+    setDbState((prev) => ({
+      ...prev,
+      contents: prev.contents.filter((c) => c.id !== id),
+    }));
+
+  const deleteProject = (id: string) =>
+    setDbState((prev) => ({
+      ...prev,
+      projects: prev.projects.filter((p) => p.id !== id),
+      tasks: prev.tasks.filter((t) => t.projectId !== id),
+    }));
+
+  const deleteNow = (id: string) =>
+    setDbState((prev) => ({
+      ...prev,
+      nowEntries: prev.nowEntries.filter((n) => n.id !== id),
+    }));
+
   return (
     <DBContext.Provider
       value={{
@@ -256,17 +281,17 @@ export function DBProvider({ children }: { children: ReactNode }) {
         setDb,
         addIdea,
         updateIdea,
-        archiveIdea,
+        deleteIdea,
         addContent,
         updateContent,
-        archiveContent,
+        deleteContent,
         addProject,
         updateProject,
-        archiveProject,
+        deleteProject,
         toggleTask,
         addTask,
         addNow,
-        archiveIdeaByTitle,
+        deleteNow,
         resetAll,
       }}
     >

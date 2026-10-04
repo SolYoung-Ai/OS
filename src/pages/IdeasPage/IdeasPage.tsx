@@ -18,7 +18,7 @@ const FILTERS: { id: IdeaStatus | 'all'; label: string }[] = [
 ];
 
 export default function IdeasPage() {
-  const { db, updateIdea, archiveIdea } = useDB();
+  const { db, updateIdea, deleteIdea } = useDB();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<IdeaStatus | 'all'>('all');
   const [query, setQuery] = useState('');
@@ -40,7 +40,7 @@ export default function IdeasPage() {
 
   const onDelete = (id: string) => {
     if (confirm('确定删除这条灵感？')) {
-      archiveIdea(id);
+      deleteIdea(id);
     }
   };
 

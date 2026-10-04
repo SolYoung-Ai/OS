@@ -9,17 +9,17 @@ export type DBContextValue = {
   setDb: (updater: (prev: IDB) => IDB) => void;
   addIdea: (data: Omit<IDB['ideas'][number], 'id' | 'createdAt' | 'updatedAt'>) => string;
   updateIdea: (id: string, patch: Partial<IDB['ideas'][number]>) => void;
-  archiveIdea: (id: string) => void;
+  deleteIdea: (id: string) => void;
   addContent: (data: Omit<IDB['contents'][number], 'id' | 'createdAt' | 'updatedAt' | 'versions'>) => string;
   updateContent: (id: string, patch: Partial<IDB['contents'][number]>) => void;
-  archiveContent: (id: string) => void;
+  deleteContent: (id: string) => void;
   addProject: (data: Omit<IDB['projects'][number], 'id' | 'createdAt' | 'updatedAt'>) => string;
   updateProject: (id: string, patch: Partial<IDB['projects'][number]>) => void;
-  archiveProject: (id: string) => void;
+  deleteProject: (id: string) => void;
   toggleTask: (taskId: string) => void;
   addTask: (projectId: string, title: string) => void;
   addNow: (text: string) => void;
-  archiveIdeaByTitle: (title: string, subtitle: string) => void;
+  deleteNow: (id: string) => void;
   resetAll: () => void;
 };
 

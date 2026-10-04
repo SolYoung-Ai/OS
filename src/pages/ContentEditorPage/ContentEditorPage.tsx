@@ -8,11 +8,11 @@ import { useDB } from '@/data/db-context';
 import { CONTENT_TYPE_LABEL, CONTENT_STATUS_LABEL } from '@/data/mock';
 import { runAIAction, AI_ACTIONS, type AICmd } from '@/lib/ai';
 import { toast } from 'sonner';
-import { ArrowLeft, Sparkles, Check, RefreshCw, X, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Trash2 } from 'lucide-react';
 
 export default function ContentEditorPage() {
   const { id } = useParams();
-  const { db, updateContent, archiveContent } = useDB();
+  const { db, updateContent, deleteContent } = useDB();
   const navigate = useNavigate();
   const c = db.contents.find((x) => x.id === id);
 
@@ -40,6 +40,13 @@ export default function ContentEditorPage() {
       `钩子：${c.hook}\n核心：${c.mainPoint}\n结尾：${c.conclusion}`,
     );
     toast.success('已保存 ✓');
+  };
+
+  const onDelete = () => {
+    if (confirm('确定删除这条创作？')) {
+      deleteContent(c.id);
+      navigate('/content');
+    }
   };
 
   const run = async (cmd: AICmd) => {
@@ -97,6 +104,13 @@ export default function ContentEditorPage() {
             className="rounded-lg bg-foreground px-4 py-1.5 text-[13px] font-medium text-background transition-colors hover:opacity-90"
           >
             保存
+          </button>
+          <button
+            onClick={onDelete}
+            className="rounded-lg border border-border px-3 py-1.5 text-[13px] text-muted-foreground hover:bg-accent hover:text-destructive"
+            aria-label="删除"
+          >
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       </div>

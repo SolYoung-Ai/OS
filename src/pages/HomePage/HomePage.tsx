@@ -42,13 +42,14 @@ export default function HomePage() {
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
+  const name = db.userSettings?.name?.trim();
 
   return (
     <div className="mx-auto w-full max-w-[900px]">
       {/* ── 问候 + 快速输入 ───────────────────── */}
       <div className="pt-4 pb-8">
         <h1 className="text-[26px] font-medium tracking-tight text-foreground">
-          {greeting}，宋杨。
+          {greeting}{name ? `，${name}。` : '。'}
         </h1>
         <p className="mt-1 text-[14px] text-muted-foreground">今天想做什么？</p>
 

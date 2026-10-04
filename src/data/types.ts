@@ -129,6 +129,11 @@ export interface IAIUsage {
   estimatedCostCny: number;
 }
 
+// ── 用户设置 ──────────────────────────────────────────────
+export interface IUserSettings {
+  name: string; // 用户昵称，首页问候语用
+}
+
 // ── 数据库 ────────────────────────────────────────────────
 export interface IDB {
   ideas: IIdea[];
@@ -141,4 +146,5 @@ export interface IDB {
   modelSettings: IModelSetting[];
   aiUsage: IAIUsage;
   onboarded: boolean;
+  userSettings: IUserSettings;
 }

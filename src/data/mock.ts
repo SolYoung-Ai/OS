@@ -1,4 +1,4 @@
-// EXPORTS: MOCK_DB (IDB 初始数据), NOW_MONTHS, CONTENT_TYPE_LABEL, CONTENT_STATUS_LABEL, IDEA_STATUS_LABEL, PROJECT_STATUS_LABEL, ARCHIVE_KIND_LABEL, POTENTIAL_LABEL, IDEA_TYPE_LABEL
+// EXPORTS: MOCK_DB, CONTENT_TYPE_LABEL, CONTENT_STATUS_LABEL, IDEA_STATUS_LABEL, PROJECT_STATUS_LABEL, ARCHIVE_KIND_LABEL, POTENTIAL_LABEL, IDEA_TYPE_LABEL
 
 import type {
   IDB,
@@ -11,28 +11,12 @@ import type {
   ArchiveKind,
 } from './types';
 
-// 用相对时间生成 ISO，避免 mock 日期写死导致"最后更新"永远看起来旧
 function daysAgo(n: number, h = 0, m = 0): string {
   const d = new Date();
   d.setDate(d.getDate() - n);
   d.setHours(h, m, 0, 0);
   return d.toISOString();
 }
-
-export const NOW_MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
 
 export const CONTENT_TYPE_LABEL: Record<ContentType, string> = {
   shortvideo: '短视频',
@@ -87,6 +71,8 @@ export const IDEA_TYPE_LABEL: Record<IdeaType, string> = {
 
 export const MOCK_DB: IDB = {
   onboarded: true,
+  userSettings: { name: '' },
+
   aiUsage: { requests: 0, tokens: 0, estimatedCostCny: 0 },
 
   aiProviders: [
@@ -106,11 +92,11 @@ export const MOCK_DB: IDB = {
   ],
 
   nowEntries: [
-    { id: 'now-1', text: '终于把 SolYoung OS 的第一版想清楚了。', createdAt: daysAgo(0, 16, 24), updatedAt: daysAgo(0, 16, 24), publishedAt: daysAgo(0, 16, 24) },
-    { id: 'now-2', text: '开始重新研究 AI 视频生成。', createdAt: daysAgo(1, 14, 12), updatedAt: daysAgo(1, 14, 12), publishedAt: daysAgo(1, 14, 12) },
-    { id: 'now-3', text: '重新设计了 SolYoung 的个人网站。', createdAt: daysAgo(3, 11, 5), updatedAt: daysAgo(3, 11, 5), publishedAt: daysAgo(3, 11, 5) },
-    { id: 'now-4', text: '秋禾农汇：开始搭建品牌内容系统。', createdAt: daysAgo(12, 20, 40), updatedAt: daysAgo(12, 20, 40), publishedAt: daysAgo(12, 20, 40) },
-    { id: 'now-5', text: '野秋食验室：跑通第一批产品试样。', createdAt: daysAgo(20, 9, 30), updatedAt: daysAgo(20, 9, 30), publishedAt: daysAgo(20, 9, 30) },
+    { id: 'now-1', text: '整理了一下这个工作台的结构。', createdAt: daysAgo(0, 16, 24), updatedAt: daysAgo(0, 16, 24), publishedAt: daysAgo(0, 16, 24) },
+    { id: 'now-2', text: '开始研究 AI 辅助创作。', createdAt: daysAgo(1, 14, 12), updatedAt: daysAgo(1, 14, 12), publishedAt: daysAgo(1, 14, 12) },
+    { id: 'now-3', text: '重新设计了个人主页。', createdAt: daysAgo(3, 11, 5), updatedAt: daysAgo(3, 11, 5), publishedAt: daysAgo(3, 11, 5) },
+    { id: 'now-4', text: '开始搭建内容创作流程。', createdAt: daysAgo(12, 20, 40), updatedAt: daysAgo(12, 20, 40), publishedAt: daysAgo(12, 20, 40) },
+    { id: 'now-5', text: '跑通了第一条内容。', createdAt: daysAgo(20, 9, 30), updatedAt: daysAgo(20, 9, 30), publishedAt: daysAgo(20, 9, 30) },
   ],
 
   ideas: [
@@ -168,17 +154,17 @@ export const MOCK_DB: IDB = {
     },
     {
       id: 'idea-4',
-      title: '养生品牌的节气内容怎么讲才不油腻',
+      title: '内容创作怎么讲才不空洞',
       originalThought:
-        '元养说做节气内容，容易陷入"什么节气吃什么"的套话。真正打动人的是把食材溯源讲成一个故事。',
+        '很多内容流于表面，真正打动人的是把一个具体的东西讲成一个故事。溯源、细节、人物。',
       type: 'idea',
-      topic: '元养说 / Content',
+      topic: 'Content / Storytelling',
       potential: 'high',
       status: 'ready',
-      suggestedAngles: ['八珍粉溯源', '黄精九蒸九晒的耐心'],
-      candidateTitles: ['一味食材的旅程'],
+      suggestedAngles: ['把产品讲成故事', '细节比观点更打动人'],
+      candidateTitles: ['具体的力量'],
       relatedIdeaIds: [],
-      tags: ['元养说', '节气'],
+      tags: ['内容', '故事'],
       createdAt: daysAgo(5, 13, 20),
       updatedAt: daysAgo(4, 9, 0),
     },
@@ -266,7 +252,7 @@ export const MOCK_DB: IDB = {
   projects: [
     {
       id: 'project-1',
-      name: 'SolYoung 网站',
+      name: '个人主页',
       status: 'active',
       goal: '建立一个长期属于自己的个人网站。',
       taskIds: ['task-1', 'task-2', 'task-3', 'task-4', 'task-5'],
@@ -290,37 +276,25 @@ export const MOCK_DB: IDB = {
     },
     {
       id: 'project-3',
-      name: '野秋食验室',
+      name: '内容实验',
       status: 'active',
-      goal: '产品试样的实验与记录。',
+      goal: '测试不同内容形式和表达方式。',
       taskIds: ['task-8'],
       ideaIds: [],
       contentIds: [],
-      notes: ['第一批试样已经跑通。'],
+      notes: ['第一批测试内容已经跑通。'],
       createdAt: daysAgo(25, 8, 0),
       updatedAt: daysAgo(5, 16, 40),
     },
     {
       id: 'project-4',
-      name: '秋禾农汇',
-      status: 'active',
-      goal: '搭建家乡辣椒品牌的内容系统。',
-      taskIds: [],
-      ideaIds: [],
-      contentIds: [],
-      notes: [],
-      createdAt: daysAgo(40, 12, 0),
-      updatedAt: daysAgo(12, 20, 40),
-    },
-    {
-      id: 'project-5',
-      name: 'Camera Simulator',
+      name: '写作练习',
       status: 'paused',
-      goal: '一个相机模拟器的小工具。',
+      goal: '每周写一篇，保持手感。',
       taskIds: [],
       ideaIds: [],
       contentIds: [],
-      notes: ['先暂停，精力在内容上。'],
+      notes: ['先暂停，精力在视频上。'],
       createdAt: daysAgo(60, 15, 0),
       updatedAt: daysAgo(9, 14, 20),
     },
@@ -334,14 +308,14 @@ export const MOCK_DB: IDB = {
     { id: 'task-5', title: '移动端适配', done: false, projectId: 'project-1', createdAt: daysAgo(30, 10, 0), updatedAt: daysAgo(30, 10, 0) },
     { id: 'task-6', title: '测试模型', done: false, projectId: 'project-2', createdAt: daysAgo(18, 9, 0), updatedAt: daysAgo(18, 9, 0) },
     { id: 'task-7', title: '拍摄视频', done: false, projectId: 'project-2', createdAt: daysAgo(18, 9, 0), updatedAt: daysAgo(18, 9, 0) },
-    { id: 'task-8', title: '记录试样反馈', done: false, projectId: 'project-3', createdAt: daysAgo(25, 8, 0), updatedAt: daysAgo(25, 8, 0) },
+    { id: 'task-8', title: '记录反馈', done: false, projectId: 'project-3', createdAt: daysAgo(25, 8, 0), updatedAt: daysAgo(25, 8, 0) },
   ],
 
   archiveEntries: [
-    { id: 'arc-1', kind: 'milestone', title: 'SolYoung OS 开始设计自己的个人创作系统', occurredOn: daysAgo(0, 0, 0).slice(0, 10), createdAt: daysAgo(0, 0, 0), updatedAt: daysAgo(0, 0, 0) },
+    { id: 'arc-1', kind: 'milestone', title: '开始设计自己的个人创作系统', occurredOn: daysAgo(0, 0, 0).slice(0, 10), createdAt: daysAgo(0, 0, 0), updatedAt: daysAgo(0, 0, 0) },
     { id: 'arc-2', kind: 'project', title: 'AI 视频', subtitle: '开始研究 AI 视频生成。', occurredOn: daysAgo(1, 0, 0).slice(0, 10), createdAt: daysAgo(1, 0, 0), updatedAt: daysAgo(1, 0, 0) },
-    { id: 'arc-3', kind: 'project', title: 'SolYoung', subtitle: '重新设计个人网站。', occurredOn: daysAgo(3, 0, 0).slice(0, 10), createdAt: daysAgo(3, 0, 0), updatedAt: daysAgo(3, 0, 0) },
-    { id: 'arc-4', kind: 'project', title: '秋禾农汇', subtitle: '开始搭建品牌内容系统。', occurredOn: daysAgo(12, 0, 0).slice(0, 10), createdAt: daysAgo(12, 0, 0), updatedAt: daysAgo(12, 0, 0) },
-    { id: 'arc-5', kind: 'milestone', title: '元养说', subtitle: '跑通第一批产品试样。', occurredOn: daysAgo(20, 0, 0).slice(0, 10), createdAt: daysAgo(20, 0, 0), updatedAt: daysAgo(20, 0, 0) },
+    { id: 'arc-3', kind: 'project', title: '个人主页', subtitle: '重新设计。', occurredOn: daysAgo(3, 0, 0).slice(0, 10), createdAt: daysAgo(3, 0, 0), updatedAt: daysAgo(3, 0, 0) },
+    { id: 'arc-4', kind: 'project', title: '内容创作', subtitle: '开始搭建内容系统。', occurredOn: daysAgo(12, 0, 0).slice(0, 10), createdAt: daysAgo(12, 0, 0), updatedAt: daysAgo(12, 0, 0) },
+    { id: 'arc-5', kind: 'milestone', title: '第一条内容', subtitle: '跑通。', occurredOn: daysAgo(20, 0, 0).slice(0, 10), createdAt: daysAgo(20, 0, 0), updatedAt: daysAgo(20, 0, 0) },
   ],
 };

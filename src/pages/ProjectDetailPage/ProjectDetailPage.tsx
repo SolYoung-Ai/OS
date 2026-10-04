@@ -10,7 +10,7 @@ import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
-  const { db, toggleTask, addTask, updateProject, archiveProject } = useDB();
+  const { db, toggleTask, addTask, updateProject, deleteProject } = useDB();
   const navigate = useNavigate();
   const [newTask, setNewTask] = useState('');
   const [newNote, setNewNote] = useState('');
@@ -39,11 +39,11 @@ export default function ProjectDetailPage() {
     setNewNote('');
   };
 
-  const archive = () => {
-    archiveProject(p.id);
-    setShowUndo(true);
-    setTimeout(() => setShowUndo(false), 5000);
-    setTimeout(() => navigate('/projects'), 800);
+  const onDelete = () => {
+    if (confirm('确定删除这个项目？')) {
+      deleteProject(p.id);
+      navigate('/projects');
+    }
   };
 
   return (
@@ -61,9 +61,9 @@ export default function ProjectDetailPage() {
           <div className="flex items-center gap-2">
             <KindBadge>{PROJECT_STATUS_LABEL[p.status]}</KindBadge>
             <button
-              onClick={archive}
+              onClick={onDelete}
               className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-destructive"
-              aria-label="归档项目"
+              aria-label="删除项目"
             >
               <Trash2 className="h-4 w-4" />
             </button>

@@ -1,6 +1,6 @@
 {
-  "name": "My OS",
-  "short_name": "MyOS",
+  "name": "My.OS",
+  "short_name": "My.OS",
   "description": "个人创作工作台：记录、思考、创作、发布、归档",
   "start_url": "/solyoung-os/",
   "display": "standalone",
@@ -8,7 +8,7 @@
   "theme_color": "#F7F7F5",
   "icons": [
     {
-      "src": "/solyoung-os/logo-solyoung.png",
+      "src": "/solyoung-os/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

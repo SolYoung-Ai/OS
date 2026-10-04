@@ -8,7 +8,7 @@ import { useDB } from '@/data/db-context';
 import { CONTENT_TYPE_LABEL, CONTENT_STATUS_LABEL } from '@/data/mock';
 import { runAIAction, AI_ACTIONS, type AICmd } from '@/lib/ai';
 import { toast } from 'sonner';
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft, Trash2, ChevronDown } from 'lucide-react';
 
 export default function ContentEditorPage() {
   const { id } = useParams();

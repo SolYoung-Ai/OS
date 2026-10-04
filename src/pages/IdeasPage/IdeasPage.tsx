@@ -1,0 +1,101 @@
+// EXPORTS: IdeasPage
+// 灵感列表：搜索 + 状态筛选 + 极简列表
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDB } from '@/data/db-context';
+import { IDEA_STATUS_LABEL, IDEA_TYPE_LABEL, POTENTIAL_LABEL } from '@/data/mock';
+import type { IdeaStatus } from '@/data/types';
+import { EmptyState, KindBadge, TimeAgo } from '@/components/blocks';
+import { Search } from 'lucide-react';
+
+const FILTERS: { id: IdeaStatus | 'all'; label: string }[] = [
+  { id: 'all', label: '全部' },
+  { id: 'inbox', label: '收件箱' },
+  { id: 'developing', label: '整理中' },
+  { id: 'ready', label: '就绪' },
+  { id: 'archived', label: '已归档' },
+];
+
+export default function IdeasPage() {
+  const { db } = useDB();
+  const navigate = useNavigate();
+  const [filter, setFilter] = useState<IdeaStatus | 'all'>('all');
+  const [query, setQuery] = useState('');
+
+  const q = query.trim().toLowerCase();
+  const list = db.ideas
+    .filter((i) => (filter === 'all' ? true : i.status === filter))
+    .filter((i) => !q || i.title.toLowerCase().includes(q) || i.topic.toLowerCase().includes(q));
+
+  return (
+    <div className="mx-auto w-full max-w-[900px]">
+      <div className="pb-6 pt-2">
+        <h1 className="text-[24px] font-medium tracking-tight text-foreground">灵感</h1>
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          所有想法的集合，从记录开始。
+        </p>
+      </div>
+
+      {/* 搜索 + 筛选 */}
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 sm:w-72">
+          <Search className="h-4 w-4 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="搜索灵感..."
+            className="h-9 w-full bg-transparent text-[13px] placeholder:text-muted-foreground focus:outline-none"
+            aria-label="搜索灵感"
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-1">
+          {FILTERS.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`rounded-md px-3 py-1.5 text-[12px] transition-colors ${
+                filter === f.id
+                  ? 'bg-accent text-accent-foreground font-medium'
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 列表 */}
+      {list.length === 0 ? (
+        <EmptyState
+          title="这里还什么都没有。趁忘记之前，先记下来。"
+          hint="从「记录」页开始，或直接按 N"
+        />
+      ) : (
+        <div className="space-y-1">
+          {list.map((i) => (
+            <button
+              key={i.id}
+              onClick={() => navigate(`/ideas/${i.id}`)}
+              className="flex w-full flex-col gap-1 rounded-lg border border-transparent px-4 py-3 text-left transition-colors hover:border-border hover:bg-card"
+            >
+              <div className="flex items-baseline justify-between gap-4">
+                <span className="text-[14px] font-medium text-foreground">{i.title}</span>
+                <span className="shrink-0 text-[12px] text-muted-foreground">
+                  捕获于 {TimeAgo({ iso: i.createdAt })}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
+                <KindBadge variant="outline">{i.topic}</KindBadge>
+                <span>{IDEA_TYPE_LABEL[i.type]}</span>
+                <span>潜力：{POTENTIAL_LABEL[i.potential]}</span>
+                <span>· {IDEA_STATUS_LABEL[i.status]}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

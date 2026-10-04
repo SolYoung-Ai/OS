@@ -7,7 +7,7 @@ import { useDB } from '@/data/db-context';
 import { IDEA_STATUS_LABEL, IDEA_TYPE_LABEL, POTENTIAL_LABEL } from '@/data/mock';
 import type { IdeaStatus } from '@/data/types';
 import { EmptyState, KindBadge, TimeAgo } from '@/components/blocks';
-import { Search } from 'lucide-react';
+import { Search, Pencil, Trash2 } from 'lucide-react';
 
 const FILTERS: { id: IdeaStatus | 'all'; label: string }[] = [
   { id: 'all', label: '全部' },
@@ -18,7 +18,7 @@ const FILTERS: { id: IdeaStatus | 'all'; label: string }[] = [
 ];
 
 export default function IdeasPage() {
-  const { db } = useDB();
+  const { db, updateIdea, archiveIdea } = useDB();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<IdeaStatus | 'all'>('all');
   const [query, setQuery] = useState('');
@@ -27,6 +27,22 @@ export default function IdeasPage() {
   const list = db.ideas
     .filter((i) => (filter === 'all' ? true : i.status === filter))
     .filter((i) => !q || i.title.toLowerCase().includes(q) || i.topic.toLowerCase().includes(q));
+
+  const onEdit = (id: string) => {
+    const idea = db.ideas.find((i) => i.id === id);
+    if (!idea) return;
+    const title = prompt('标题', idea.title);
+    if (title === null) return;
+    const text = prompt('内容', idea.originalThought);
+    if (text === null) return;
+    updateIdea(id, { title, originalThought: text });
+  };
+
+  const onDelete = (id: string) => {
+    if (confirm('确定删除这条灵感？')) {
+      archiveIdea(id);
+    }
+  };
 
   return (
     <div className="mx-auto w-full max-w-[900px]">
@@ -37,7 +53,6 @@ export default function IdeasPage() {
         </p>
       </div>
 
-      {/* 搜索 + 筛选 */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 sm:w-72">
           <Search className="h-4 w-4 text-muted-foreground" />
@@ -66,7 +81,6 @@ export default function IdeasPage() {
         </div>
       </div>
 
-      {/* 列表 */}
       {list.length === 0 ? (
         <EmptyState
           title="这里还什么都没有。趁忘记之前，先记下来。"
@@ -75,24 +89,42 @@ export default function IdeasPage() {
       ) : (
         <div className="space-y-1">
           {list.map((i) => (
-            <button
+            <div
               key={i.id}
               onClick={() => navigate(`/ideas/${i.id}`)}
-              className="flex w-full flex-col gap-1 rounded-lg border border-transparent px-4 py-3 text-left transition-colors hover:border-border hover:bg-card"
+              className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg border border-transparent px-4 py-3 transition-colors hover:border-border hover:bg-card"
             >
-              <div className="flex items-baseline justify-between gap-4">
-                <span className="text-[14px] font-medium text-foreground">{i.title}</span>
-                <span className="shrink-0 text-[12px] text-muted-foreground">
-                  捕获于 {TimeAgo({ iso: i.createdAt })}
-                </span>
+              <div className="flex-1">
+                <div className="flex items-baseline justify-between gap-4">
+                  <span className="text-[14px] font-medium text-foreground">{i.title}</span>
+                  <span className="shrink-0 text-[12px] text-muted-foreground">
+                    捕获于 {TimeAgo({ iso: i.createdAt })}
+                  </span>
+                </div>
+                <div className="mt-1 flex items-center gap-2 text-[12px] text-muted-foreground">
+                  <KindBadge variant="outline">{i.topic}</KindBadge>
+                  <span>{IDEA_TYPE_LABEL[i.type]}</span>
+                  <span>潜力：{POTENTIAL_LABEL[i.potential]}</span>
+                  <span>· {IDEA_STATUS_LABEL[i.status]}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
-                <KindBadge variant="outline">{i.topic}</KindBadge>
-                <span>{IDEA_TYPE_LABEL[i.type]}</span>
-                <span>潜力：{POTENTIAL_LABEL[i.potential]}</span>
-                <span>· {IDEA_STATUS_LABEL[i.status]}</span>
+              <div className="flex shrink-0 gap-1" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => onEdit(i.id)}
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                  aria-label="编辑"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => onDelete(i.id)}
+                  className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-destructive"
+                  aria-label="删除"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       )}

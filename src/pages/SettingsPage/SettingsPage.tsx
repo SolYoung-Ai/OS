@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const { theme, setTheme } = useThemeMode();
   const fileRef = useRef<HTMLInputElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [installStep, setInstallStep] = useState<'chrome' | 'edge' | null>(null);
 
   const setName = (name: string) => {
     setDb((prev) => ({
@@ -143,20 +144,63 @@ export default function SettingsPage() {
         <h2 className="mb-4 flex items-center gap-2 text-[15px] font-medium text-foreground">
           <Monitor className="h-4 w-4" /> 下载到自己电脑
         </h2>
-        <div className="space-y-3 text-[13px] leading-relaxed text-muted-foreground">
+        <div className="space-y-3">
+          {/* 方式一 */}
           <div className="rounded-lg border border-border bg-background p-4">
             <p className="mb-2 font-medium text-foreground">方式一：安装为桌面应用（推荐）</p>
-            <p className="text-[12px] leading-relaxed">
-              用 Chrome 或 Edge 浏览器打开本站，地址栏右侧会出现「安装 / Install」图标。
-              点击后会安装成一个独立应用，离线也能打开，像桌面软件一样使用。
+            <p className="mb-3 text-[12px] leading-relaxed text-muted-foreground">
+              用 Chrome 或 Edge 打开本站，安装成独立应用，离线可用。
             </p>
+            {!installStep && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setInstallStep('chrome')}
+                  className="rounded-lg border border-border px-3 py-1.5 text-[12px] text-foreground hover:bg-accent"
+                >
+                  Chrome
+                </button>
+                <button
+                  onClick={() => setInstallStep('edge')}
+                  className="rounded-lg border border-border px-3 py-1.5 text-[12px] text-foreground hover:bg-accent"
+                >
+                  Edge
+                </button>
+              </div>
+            )}
+            {installStep && (
+              <div className="rounded-md border border-border bg-card p-3">
+                <p className="mb-2 text-[12px] font-medium text-foreground">
+                  {installStep === 'chrome' ? 'Chrome 安装步骤' : 'Edge 安装步骤'}
+                </p>
+                <ol className="space-y-1 text-[11px] leading-relaxed text-muted-foreground">
+                  <li>1. 用 {installStep === 'chrome' ? 'Chrome' : 'Edge'} 浏览器打开本站</li>
+                  <li>2. 看地址栏右侧，找到「安装 / Install」图标（像一个显示器带向下箭头）</li>
+                  <li>3. 点击它，选择「安装」</li>
+                  <li>4. 安装完成后会自动打开一个独立窗口，桌面也会出现快捷方式</li>
+                </ol>
+                <button
+                  onClick={() => setInstallStep(null)}
+                  className="mt-2 text-[11px] text-muted-foreground underline"
+                >
+                  返回
+                </button>
+              </div>
+            )}
           </div>
+
+          {/* 方式二 */}
           <div className="rounded-lg border border-border bg-background p-4">
             <p className="mb-2 font-medium text-foreground">方式二：下载静态文件</p>
-            <p className="text-[12px] leading-relaxed">
-              把网站的静态文件下载到本地，双击 index.html 即可在浏览器打开。
-              所有数据存在你自己的浏览器里，不依赖网络。
+            <p className="mb-3 text-[12px] leading-relaxed text-muted-foreground">
+              下载整个网站的文件包，解压后双击 index.html 即可在浏览器打开。
             </p>
+            <a
+              href="https://github.com/SolYoung-Ai/solyoung-os/archive/refs/heads/gh-pages.zip"
+              download
+              className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-1.5 text-[12px] text-foreground hover:bg-accent"
+            >
+              <Download className="h-3.5 w-3.5" /> 下载网站文件
+            </a>
           </div>
         </div>
       </div>

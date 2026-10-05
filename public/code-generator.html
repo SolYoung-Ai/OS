@@ -80,26 +80,36 @@
       <option value="5" selected>5 个</option>
       <option value="10">10 个</option>
     </select>
-    <label>前缀（默认 MYOS-2026）</label>
-    <input id="prefix" value="MYOS-2026" />
     <button onclick="generate()">生成邀请码</button>
     <div class="code-list" id="list"></div>
     <p class="hint">
-      生成的邀请码格式：MYOS-2026-XXXX<br/>
+      生成的邀请码格式：MYOS-2026-XXXX-YYYY<br/>
       客户在 MyOS 设置页输入后即可解锁全部功能。<br/>
-      注意：主应用硬编码的邀请码列表需要和生成的对应，否则客户输入无效。
+      生成的邀请码直接有效，不需要改代码重新部署。
     </p>
   </div>
 </div>
 
 <script>
+const SECRET = 'myos-secret-2026';
+
+function hashCode(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36).toUpperCase();
+}
+
 function generate() {
   const count = parseInt(document.getElementById('count').value);
-  const prefix = document.getElementById('prefix').value.trim().toUpperCase() || 'MYOS-2026';
   const list = document.getElementById('list');
   list.innerHTML = '';
   for (let i = 0; i < count; i++) {
-    const code = prefix + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const randomPart = Math.random().toString(36).slice(2, 6).toUpperCase();
+    const checkPart = (hashCode(randomPart + SECRET) + 'XXXX').slice(0, 4).toUpperCase();
+    const code = 'MYOS-2026-' + randomPart + '-' + checkPart;
     const item = document.createElement('div');
     item.className = 'code-item';
     item.innerHTML = '<span>' + code + '</span><button class="copy" onclick="copy(\'' + code + '\', this)">复制</button>';

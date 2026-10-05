@@ -10,6 +10,15 @@ import {
   Monitor, HelpCircle, ChevronDown,
 } from 'lucide-react';
 
+function hashCode(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36).toUpperCase();
+}
+
 export default function SettingsPage() {
   const { db, setDb, resetAll } = useDB();
   const { theme, setTheme } = useThemeMode();
@@ -23,8 +32,17 @@ export default function SettingsPage() {
   });
 
   const onUnlock = () => {
-    const codes = ['MYOS-2026-DEMO', 'MYOS-2026-PRO', 'MYOS-2026-VIP'];
-    if (codes.includes(codeInput.trim().toUpperCase())) {
+    const input = codeInput.trim().toUpperCase();
+    // 格式：MYOS-2026-XXXX-YYYY
+    const parts = input.split('-');
+    if (parts.length !== 4 || parts[0] !== 'MYOS' || parts[1] !== '2026' || parts[2].length !== 4 || parts[3].length !== 4) {
+      setUnlockError('邀请码格式不正确');
+      return;
+    }
+    const SECRET = 'myos-secret-2026';
+    const randomPart = parts[2];
+    const expectedCheck = (hashCode(randomPart + SECRET) + 'XXXX').slice(0, 4).toUpperCase();
+    if (parts[3] === expectedCheck) {
       try { localStorage.setItem('myos:unlocked', 'true'); } catch {}
       setUnlocked(true);
       setUnlockError('');

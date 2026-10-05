@@ -16,6 +16,23 @@ export default function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [installStep, setInstallStep] = useState<'chrome' | 'edge' | null>(null);
+  const [codeInput, setCodeInput] = useState('');
+  const [unlockError, setUnlockError] = useState('');
+  const [unlocked, setUnlocked] = useState(() => {
+    try { return localStorage.getItem('myos:unlocked') === 'true'; } catch { return false; }
+  });
+
+  const onUnlock = () => {
+    const codes = ['MYOS-2026-DEMO', 'MYOS-2026-PRO', 'MYOS-2026-VIP'];
+    if (codes.includes(codeInput.trim().toUpperCase())) {
+      try { localStorage.setItem('myos:unlocked', 'true'); } catch {}
+      setUnlocked(true);
+      setUnlockError('');
+      toast.success('已解锁全部功能');
+    } else {
+      setUnlockError('邀请码无效，请检查后重试');
+    }
+  };
 
   const setName = (name: string) => {
     setDb((prev) => ({
@@ -116,27 +133,37 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {/* 外观 */}
+      {/* 邀请码 */}
       <div className="mb-6 rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-[15px] font-medium text-foreground">外观</h2>
-        <div className="flex items-center gap-2">
-          {[
-            { id: 'light', label: '浅色', icon: Sun },
-            { id: 'dark', label: '深色', icon: Moon },
-          ].map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setTheme(id)}
-              className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-[13px] transition-colors ${
-                theme === id
-                  ? 'border-foreground bg-accent text-foreground'
-                  : 'border-border text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <Icon className="h-4 w-4" /> {label}
-            </button>
-          ))}
-        </div>
+        <h2 className="mb-2 text-[15px] font-medium text-foreground">邀请码</h2>
+        {unlocked ? (
+          <p className="text-[13px] text-muted-foreground">
+            已解锁全部功能 ✓
+          </p>
+        ) : (
+          <>
+            <p className="mb-3 text-[12px] text-muted-foreground">
+              输入邀请码解锁全部功能。未解锁状态下部分功能受限。
+            </p>
+            <div className="flex gap-2">
+              <input
+                value={codeInput}
+                onChange={(e) => setCodeInput(e.target.value)}
+                placeholder="输入邀请码"
+                className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-[14px] placeholder:text-muted-foreground/60 focus:border-foreground/30 focus:outline-none"
+              />
+              <button
+                onClick={onUnlock}
+                className="rounded-md bg-foreground px-4 py-2 text-[13px] font-medium text-background hover:opacity-90"
+              >
+                解锁
+              </button>
+            </div>
+            {unlockError && (
+              <p className="mt-2 text-[12px] text-destructive">{unlockError}</p>
+            )}
+          </>
+        )}
       </div>
 
       {/* 下载安装 */}

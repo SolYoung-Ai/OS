@@ -10,7 +10,11 @@ import { NavIcon } from '@/components/NavIcon';
 import CommandPalette from '@/components/CommandPalette';
 import { useShortcuts } from '@/hooks/use-shortcuts';
 import { useThemeMode } from '@/hooks/use-theme-mode';
-import { Search, Moon, Sun, Plus, Settings } from 'lucide-react';
+import { Search, Moon, Sun, Plus, Settings, Lock } from 'lucide-react';
+
+function isUnlocked(): boolean {
+  try { return localStorage.getItem('myos:unlocked') === 'true'; } catch { return false; }
+}
 
 export const Layout = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -52,6 +56,9 @@ export const Layout = () => {
         >
           <NavIcon name={item.icon} className="h-[15px] w-[15px]" />
           <span className="flex-1">{item.label}</span>
+          {item.locked && !isUnlocked() && (
+            <Lock className="h-3 w-3 text-muted-foreground/50" />
+          )}
           {item.hint && (
             <kbd className="text-[10px] text-muted-foreground/70">⌘K</kbd>
           )}

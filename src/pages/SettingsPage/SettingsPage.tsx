@@ -39,11 +39,24 @@ export default function SettingsPage() {
       setUnlockError('邀请码格式不正确');
       return;
     }
+    // 检查是否已使用过（同一浏览器内一次性使用）
+    try {
+      const used = JSON.parse(localStorage.getItem('myos:used-codes') || '[]');
+      if (used.includes(input)) {
+        setUnlockError('这个邀请码已经使用过了');
+        return;
+      }
+    } catch {}
     const SECRET = 'myos-secret-2026';
     const randomPart = parts[2];
     const expectedCheck = (hashCode(randomPart + SECRET) + 'XXXX').slice(0, 4).toUpperCase();
     if (parts[3] === expectedCheck) {
-      try { localStorage.setItem('myos:unlocked', 'true'); } catch {}
+      try {
+        localStorage.setItem('myos:unlocked', 'true');
+        const used = JSON.parse(localStorage.getItem('myos:used-codes') || '[]');
+        used.push(input);
+        localStorage.setItem('myos:used-codes', JSON.stringify(used));
+      } catch {}
       setUnlocked(true);
       setUnlockError('');
       toast.success('已解锁全部功能');

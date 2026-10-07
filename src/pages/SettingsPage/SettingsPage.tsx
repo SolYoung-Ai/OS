@@ -25,45 +25,6 @@ export default function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [installStep, setInstallStep] = useState<'chrome' | 'edge' | null>(null);
-  const [codeInput, setCodeInput] = useState('');
-  const [unlockError, setUnlockError] = useState('');
-  const [unlocked, setUnlocked] = useState(() => {
-    try { return localStorage.getItem('myos:unlocked') === 'true'; } catch { return false; }
-  });
-
-  const onUnlock = () => {
-    const input = codeInput.trim().toUpperCase();
-    // 格式：MYOS-2026-XXXX-YYYY
-    const parts = input.split('-');
-    if (parts.length !== 4 || parts[0] !== 'MYOS' || parts[1] !== '2026' || parts[2].length !== 4 || parts[3].length !== 4) {
-      setUnlockError('邀请码格式不正确');
-      return;
-    }
-    // 检查是否已使用过（同一浏览器内一次性使用）
-    try {
-      const used = JSON.parse(localStorage.getItem('myos:used-codes') || '[]');
-      if (used.includes(input)) {
-        setUnlockError('这个邀请码已经使用过了');
-        return;
-      }
-    } catch {}
-    const SECRET = 'myos-secret-2026';
-    const randomPart = parts[2];
-    const expectedCheck = (hashCode(randomPart + SECRET) + 'XXXX').slice(0, 4).toUpperCase();
-    if (parts[3] === expectedCheck) {
-      try {
-        localStorage.setItem('myos:unlocked', 'true');
-        const used = JSON.parse(localStorage.getItem('myos:used-codes') || '[]');
-        used.push(input);
-        localStorage.setItem('myos:used-codes', JSON.stringify(used));
-      } catch {}
-      setUnlocked(true);
-      setUnlockError('');
-      toast.success('已解锁全部功能');
-    } else {
-      setUnlockError('邀请码无效，请检查后重试');
-    }
-  };
 
   const setName = (name: string) => {
     setDb((prev) => ({
@@ -162,39 +123,6 @@ export default function SettingsPage() {
         <p className="mt-2 text-[11px] text-muted-foreground">
           填好后，首页问候语会自动用你的名字。
         </p>
-      </div>
-
-      {/* 邀请码 */}
-      <div className="mb-6 rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-2 text-[15px] font-medium text-foreground">邀请码</h2>
-        {unlocked ? (
-          <p className="text-[13px] text-muted-foreground">
-            已解锁全部功能 ✓
-          </p>
-        ) : (
-          <>
-            <p className="mb-3 text-[12px] text-muted-foreground">
-              输入邀请码解锁全部功能。未解锁状态下部分功能受限。
-            </p>
-            <div className="flex gap-2">
-              <input
-                value={codeInput}
-                onChange={(e) => setCodeInput(e.target.value)}
-                placeholder="输入邀请码"
-                className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-[14px] placeholder:text-muted-foreground/60 focus:border-foreground/30 focus:outline-none"
-              />
-              <button
-                onClick={onUnlock}
-                className="rounded-md bg-foreground px-4 py-2 text-[13px] font-medium text-background hover:opacity-90"
-              >
-                解锁
-              </button>
-            </div>
-            {unlockError && (
-              <p className="mt-2 text-[12px] text-destructive">{unlockError}</p>
-            )}
-          </>
-        )}
       </div>
 
       {/* 下载安装 */}

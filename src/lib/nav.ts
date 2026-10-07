@@ -8,17 +8,16 @@ export interface INavItem {
   path: string;
   icon: string;
   hint?: string;
-  locked?: boolean;
 }
 
 export const NAV_ITEMS: INavItem[] = [
   { label: '首页', path: '/', icon: 'home' },
   { label: '记录', path: '/capture', icon: 'capture' },
   { label: '灵感', path: '/ideas', icon: 'ideas' },
-  { label: '创作', path: '/content', icon: 'content', locked: true },
-  { label: '项目', path: '/projects', icon: 'projects', locked: true },
+  { label: '创作', path: '/content', icon: 'content' },
+  { label: '项目', path: '/projects', icon: 'projects' },
   { label: '此刻', path: '/now', icon: 'now' },
-  { label: '档案', path: '/archive', icon: 'archive', locked: true },
+  { label: '档案', path: '/archive', icon: 'archive' },
   { label: '搜索', path: '/search', icon: 'search', hint: '⌘K' },
   { label: '设置', path: '/settings', icon: 'settings' },
 ];

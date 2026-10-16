@@ -10,7 +10,7 @@ import { NavIcon } from '@/components/NavIcon';
 import CommandPalette from '@/components/CommandPalette';
 import { useShortcuts } from '@/hooks/use-shortcuts';
 import { useThemeMode } from '@/hooks/use-theme-mode';
-import { Search, Moon, Sun, Plus, Menu, X, Settings } from 'lucide-react';
+import { Search, Moon, Sun, Menu, X, Settings } from 'lucide-react';
 
 export const Layout = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -206,14 +206,6 @@ export const Layout = () => {
             {item.label}
           </NavLink>
         ))}
-        {/* 中间圆形新建按钮（叠在灵感之上，稍靠右以露出） */}
-        <button
-          onClick={() => navigate('/capture')}
-          className="absolute -top-5 left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-lg transition-transform active:scale-95"
-          aria-label="快速记录"
-        >
-          <Plus className="h-5 w-5" />
-        </button>
       </nav>
 
       {/* 底部留白，避免被移动端导航遮挡 */}

@@ -10,7 +10,7 @@ import { NavIcon } from '@/components/NavIcon';
 import CommandPalette from '@/components/CommandPalette';
 import { useShortcuts } from '@/hooks/use-shortcuts';
 import { useThemeMode } from '@/hooks/use-theme-mode';
-import { Search, Moon, Sun, Plus, Menu, X } from 'lucide-react';
+import { Search, Moon, Sun, Plus, Menu, X, Settings } from 'lucide-react';
 
 export const Layout = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);

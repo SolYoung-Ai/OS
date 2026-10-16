@@ -1,12 +1,9 @@
 // EXPORTS: ContentEditorPage
-// 内容编辑器（核心）：钩子/核心观点/结尾 + 轻量 AI Command Bar
-// AI 是副驾驶：输出可 插入 / 重新生成 / 放弃
+// 内容编辑器（核心）：钩子/核心观点/结尾 + 版本记录
 
-import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDB } from '@/data/db-context';
 import { CONTENT_TYPE_LABEL, CONTENT_STATUS_LABEL } from '@/data/mock';
-import { runAIAction, AI_ACTIONS, type AICmd } from '@/lib/ai';
 import { toast } from 'sonner';
 import { ArrowLeft, Trash2, ChevronDown } from 'lucide-react';
 
@@ -15,10 +12,6 @@ export default function ContentEditorPage() {
   const { db, updateContent, deleteContent } = useDB();
   const navigate = useNavigate();
   const c = db.contents.find((x) => x.id === id);
-
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [thinking, setThinking] = useState<AICmd | null>(null);
-  const [draft, setDraft] = useState<string | null>(null);
 
   if (!c) {
     return (
@@ -47,40 +40,6 @@ export default function ContentEditorPage() {
       deleteContent(c.id);
       navigate('/content');
     }
-  };
-
-  const run = async (cmd: AICmd) => {
-    setThinking(cmd);
-    setDraft(null);
-    try {
-      const out = await runAIAction(db, cmd, {
-        title: c.title,
-        hook: c.hook,
-        mainPoint: c.mainPoint,
-        conclusion: c.conclusion,
-      });
-      setDraft(out);
-    } catch {
-      toast.error('出错了，请重试');
-    } finally {
-      setThinking(null);
-    }
-  };
-
-  const insertDraft = () => {
-    if (!draft) return;
-    pushVersion(draft);
-    // 追加到核心观点
-    updateContent(c.id, { mainPoint: c.mainPoint ? `${c.mainPoint}\n\n${draft}` : draft });
-    setDraft(null);
-    toast.success('已插入');
-  };
-
-  const regen = () => {
-    if (thinking) return;
-    const last = AI_ACTIONS.find((a) => a.id === thinking);
-    // 重新生成：直接重跑当前动作（用最近一次动作）
-    run(thinking ?? 'improve');
   };
 
   return (

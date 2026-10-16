@@ -1,5 +1,5 @@
 // EXPORTS: Layout
-// 全局 chrome：桌面左侧 220px 侧边栏 + 移动端底部导航 + 顶栏（主题切换 / ⌘K）
+// 全局 chrome：桌面左侧 220px 侧边栏 + 移动端底部导航 + 移动端左上角汉堡抽屉（全功能入口）
 // 全局 Command Palette 与快捷键也挂在这里
 
 import { useState } from 'react';
@@ -10,10 +10,11 @@ import { NavIcon } from '@/components/NavIcon';
 import CommandPalette from '@/components/CommandPalette';
 import { useShortcuts } from '@/hooks/use-shortcuts';
 import { useThemeMode } from '@/hooks/use-theme-mode';
-import { Search, Moon, Sun, Plus, Settings } from 'lucide-react';
+import { Search, Moon, Sun, Plus, Menu, X } from 'lucide-react';
 
 export const Layout = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { theme, toggle } = useThemeMode();
@@ -60,8 +61,65 @@ export const Layout = () => {
     </nav>
   );
 
+  // 移动端抽屉导航（左上角汉堡打开，含全部功能入口）
+  const renderMobileDrawer = () => (
+    <>
+      {/* 遮罩 */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-200 md:hidden ${
+          mobileMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden="true"
+      />
+      {/* 抽屉 */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r border-border bg-sidebar transition-transform duration-200 md:hidden ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        aria-label="移动端全部功能菜单"
+      >
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <span className="text-[15px] font-semibold tracking-tight text-foreground">
+            My<span className="text-[#E8632B]">.</span>OS
+          </span>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            aria-label="关闭菜单"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 py-3" aria-label="全部功能">
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/'}
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive: act }) =>
+                `flex items-center gap-3 rounded-md px-3 py-2.5 text-[14px] transition-colors duration-150 ${
+                  act
+                    ? 'bg-accent text-accent-foreground font-medium'
+                    : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground'
+                }`
+              }
+            >
+              <NavIcon name={item.icon} className="h-[16px] w-[16px]" />
+              <span className="flex-1">{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+        <div className="border-t border-border p-3 text-[11px] text-muted-foreground">
+          <p className="px-1 py-1">© 2026 SolYoung</p>
+        </div>
+      </aside>
+    </>
+  );
+
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh overflow-x-hidden bg-background text-foreground">
       <Toaster position="bottom-center" theme={theme === 'dark' ? 'dark' : 'light'} />
 
       {/* ── 桌面侧边栏（≥ md） ─────────────────────── */}
@@ -73,9 +131,20 @@ export const Layout = () => {
         </div>
       </aside>
 
-      {/* ── 顶栏（桌面：搜索+主题；移动端：品牌） ───── */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur md:left-[220px] md:px-8">
-        <div className="flex items-center gap-2 md:hidden">
+      {/* ── 移动端抽屉（左上角汉堡） ──────────────── */}
+      {renderMobileDrawer()}
+
+      {/* ── 顶栏 ─────────────────────────────────── */}
+      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background/80 px-3 backdrop-blur md:left-[220px] md:px-8">
+        {/* 移动端：左上角汉堡 + 品牌 */}
+        <div className="flex items-center gap-1.5 md:hidden">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="rounded-md p-1.5 text-foreground transition-colors hover:bg-accent"
+            aria-label="打开全部功能菜单"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
           <span className="text-[15px] font-semibold tracking-tight text-foreground">
             My<span className="text-[#E8632B]">.</span>OS
           </span>
@@ -83,7 +152,7 @@ export const Layout = () => {
 
         <div className="hidden md:flex md:flex-1" />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => navigate('/settings')}
             className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:hidden"
@@ -112,7 +181,7 @@ export const Layout = () => {
 
       {/* ── 主内容区 ─────────────────────────────── */}
       <main className="pt-14 md:ml-[220px]">
-        <div className="mx-auto w-full max-w-[1100px] px-4 py-8 md:px-8">
+        <div className="mx-auto w-full max-w-[1100px] px-4 py-6 md:px-8 md:py-8">
           <Outlet />
         </div>
       </main>
